@@ -34,16 +34,24 @@ jobs:
       filePath: Build.ps1
 
   - task: DotNetCoreCLI@2
-    displayName: dotnet build
     inputs:
-      searchPatternPack: src/NLog.Targets.Seq/NLog.Targets.Seq.csproj
-      buildProperties: -o /artifacts --include-source --no-restore
-  - task: CopyFiles@2
-    displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
-    inputs:
-      SourceFolder: artifacts
-      TargetFolder: $(Build.ArtifactStagingDirectory)
-      OverWrite: true
+      command: 'pack'
+      packagesToPack: 'src/NLog.Targets.Seq/NLog.Targets.Seq.csproj'
+      includesource: true
+      versioningScheme: 'off'
+      buildProperties: '--no-restore'
+
+  # - task: DotNetCoreCLI@2
+  #   displayName: dotnet build
+  #   inputs:
+  #     searchPatternPack: src/NLog.Targets.Seq/NLog.Targets.Seq.csproj
+  #     buildProperties: -o /artifacts --include-source --no-restore
+  # - task: CopyFiles@2
+  #   displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+  #   inputs:
+  #     SourceFolder: artifacts
+  #     TargetFolder: $(Build.ArtifactStagingDirectory)
+  #     OverWrite: true
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: drop'
 ...
