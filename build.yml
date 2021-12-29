@@ -23,7 +23,9 @@ jobs:
       checkLatest: true
 
   - task: NuGetCommand@2
-    displayName: NuGet restore
+    inputs:
+      command: 'restore'
+      restoreSolution: 'nlog-targets-seq.sln'
     
   - task: PowerShell@2
     displayName: PowerShell Script
