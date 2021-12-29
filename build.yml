@@ -1,0 +1,47 @@
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: cigaw
+jobs:
+- job: Job_1
+  displayName: Agent job 1
+  pool:
+    name: Default
+  steps:
+  - checkout: self
+
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk '
+    inputs:
+      useGlobalJson: true
+
+  - task: NuGetToolInstaller@1
+    displayName: Use NuGet 6.0.0
+    inputs:
+      versionSpec: 6.0.0
+      checkLatest: true
+
+  - task: NuGetCommand@2
+    displayName: NuGet restore
+    
+  - task: PowerShell@2
+    displayName: PowerShell Script
+    enabled: False
+    inputs:
+      filePath: Build.ps1
+
+  - task: DotNetCoreCLI@2
+    displayName: dotnet build
+    inputs:
+      searchPatternPack: src/NLog.Targets.Seq/NLog.Targets.Seq.csproj
+      buildProperties: -o /artifacts --include-source --no-restore
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+    inputs:
+      SourceFolder: artifacts
+      TargetFolder: $(Build.ArtifactStagingDirectory)
+      OverWrite: true
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: drop'
+...
