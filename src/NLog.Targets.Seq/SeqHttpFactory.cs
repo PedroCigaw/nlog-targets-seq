@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NLog.Targets.Seq
+namespace NLog
 {
     /// <summary>
     /// 
@@ -16,7 +16,7 @@ namespace NLog.Targets.Seq
         /// 
         /// </summary>
         /// <returns></returns>
-        HttpClientHandler CreateMessageHandler();
+        HttpMessageHandler CreateMessageHandler();
 
         /// <summary>
         /// 
@@ -25,13 +25,34 @@ namespace NLog.Targets.Seq
         HttpClient CreateClient(HttpMessageHandler handler, bool disposeHandler = true);
     }
 
-    internal class DefaultSeqHttpFactory : ISeqHttpFactory
+    /// <summary>
+    /// 
+    /// </summary>
+    public class DefaultSeqHttpFactory : ISeqHttpFactory
     {
-        public HttpClientHandler CreateMessageHandler()
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void RegisterDefaultService()
+        {
+            LogManager.LogFactory.ServiceRepository.RegisterService(typeof(ISeqHttpFactory), new DefaultSeqHttpFactory());
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public HttpMessageHandler CreateMessageHandler()
         {
             return new HttpClientHandler();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="disposeHandler"></param>
+        /// <returns></returns>
         public HttpClient CreateClient(HttpMessageHandler handler, bool disposeHandler = true)
         {
             return handler != null ? new HttpClient(handler, disposeHandler) : new HttpClient();

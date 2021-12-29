@@ -40,7 +40,6 @@ namespace NLog.Targets.Seq
         string _headerApiKey;
         HttpClient _httpClient;
         LogLevel _minimumLevel = LogLevel.Trace;
-        private ISeqHttpFactory _defaultFactory;
         static readonly UTF8Encoding Utf8 = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
         /// <summary>
@@ -113,6 +112,8 @@ namespace NLog.Targets.Seq
         /// </summary>
         protected override void InitializeTarget()
         {
+            var factory = GetHttpFactory();
+
             foreach (var prop in Properties)
             {
                 var attr = new JsonAttribute(prop.Name, prop.Value, !prop.IsNumber);
@@ -131,30 +132,24 @@ namespace NLog.Targets.Seq
                 _headerApiKey = _apiKey?.Render(LogEventInfo.CreateNullEvent()) ?? string.Empty;
 
                
-                HttpClientHandler handler = null;
+                HttpMessageHandler handler = null;
 
                 var proxyAddress = _proxyAddress?.Render(LogEventInfo.CreateNullEvent()) ?? string.Empty;
                 if (!string.IsNullOrEmpty(proxyAddress))
+                {
                     handler = new HttpClientHandler { Proxy = new WebProxy(new Uri(proxyAddress), true) };
-                if (UseDefaultCredentials)
+                }
+                else
                 {
-                    if (handler != null)
-                    {
-                        handler.UseDefaultCredentials = UseDefaultCredentials;
-                    }
-                    else
-                    {
-                        handler = GetHttpFactory().CreateMessageHandler();
-                        handler.UseDefaultCredentials = UseDefaultCredentials;
-                    }
+                    handler = factory.CreateMessageHandler();
                 }
 
-                if (handler == null)
+                if (handler is HttpClientHandler clientHandler && UseDefaultCredentials)
                 {
-                    handler = GetHttpFactory().CreateMessageHandler();
+                        clientHandler.UseDefaultCredentials = UseDefaultCredentials;
                 }
 
-                _httpClient = GetHttpFactory().CreateClient(handler);
+                _httpClient = factory.CreateClient(handler);
             }
 
             base.InitializeTarget();
@@ -162,23 +157,19 @@ namespace NLog.Targets.Seq
 
         private ISeqHttpFactory GetHttpFactory()
         {
-            if (_defaultFactory != null)
-            {
-                return _defaultFactory;
-            }
             var repository = LogManager.LogFactory.ServiceRepository;
-            try
-            {
-                _defaultFactory = repository.GetService(typeof(ISeqHttpFactory)) as ISeqHttpFactory;
-            }
-            catch { }
+            //try
+           // {
+                return repository.GetService(typeof(ISeqHttpFactory)) as ISeqHttpFactory;
+            //}
+            //catch { }
             
-            if (_defaultFactory == null)
-            {
-                _defaultFactory = new DefaultSeqHttpFactory();
-                LogManager.LogFactory.ServiceRepository.RegisterService(typeof(ISeqHttpFactory), _defaultFactory);
-            }
-            return _defaultFactory;
+            //if (_defaultFactory == null)
+            //{
+            //    _defaultFactory = new DefaultSeqHttpFactory();
+            //    LogManager.LogFactory.ServiceRepository.RegisterService(typeof(ISeqHttpFactory), _defaultFactory);
+            //}
+            //return _defaultFactory;
         }
 
         /// <summary>

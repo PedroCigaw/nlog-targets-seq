@@ -11,6 +11,11 @@ namespace NLog.Targets.Seq.Tests
 {
     public class SeqTargetTests
     {
+        public SeqTargetTests()
+        {
+            DefaultSeqHttpFactory.RegisterDefaultService();
+        }
+
         static void ToCompactJson(LogEventInfo evt, TextWriter output, IEnumerable<SeqPropertyItem> properties, int? maxRecursionLimit = null)
         {
             var target = new SeqTarget();

@@ -7,9 +7,11 @@ namespace Example
     {
         static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+
         public static void Main()
         {
             const string server = "Seq", library = "NLog";
+            DefaultSeqHttpFactory.RegisterDefaultService();
 
             // Structured logging: two named properties are captured using the message template:
             Logger.Info("Hello, {Server}, from {Library}", server, library);
