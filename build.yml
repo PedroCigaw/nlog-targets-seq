@@ -39,6 +39,7 @@ jobs:
       packagesToPack: 'src/NLog.Targets.Seq/NLog.Targets.Seq.csproj'
       includesource: true
       versioningScheme: 'off'
+      arguments: --version-suffix=local
 
   # - task: DotNetCoreCLI@2
   #   displayName: dotnet build
