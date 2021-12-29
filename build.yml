@@ -39,7 +39,6 @@ jobs:
       packagesToPack: 'src/NLog.Targets.Seq/NLog.Targets.Seq.csproj'
       includesource: true
       versioningScheme: 'off'
-      buildProperties: '--no-restore'
 
   # - task: DotNetCoreCLI@2
   #   displayName: dotnet build
