@@ -40,7 +40,7 @@ namespace NLog.Targets.Seq
         string _headerApiKey;
         HttpClient _httpClient;
         LogLevel _minimumLevel = LogLevel.Trace;
-
+        private ISeqHttpFactory _defaultFactory;
         static readonly UTF8Encoding Utf8 = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
         /// <summary>
@@ -104,7 +104,6 @@ namespace NLog.Targets.Seq
         {
             Properties = new List<SeqPropertyItem>();
             MaxRecursionLimit = 0;  // Default behavior for Serilog
-            OptimizeBufferReuse = true;
             JsonPayloadMaxLength = 128 * 1024;
         }
 
@@ -131,6 +130,7 @@ namespace NLog.Targets.Seq
 
                 _headerApiKey = _apiKey?.Render(LogEventInfo.CreateNullEvent()) ?? string.Empty;
 
+               
                 HttpClientHandler handler = null;
 
                 var proxyAddress = _proxyAddress?.Render(LogEventInfo.CreateNullEvent()) ?? string.Empty;
@@ -144,14 +144,41 @@ namespace NLog.Targets.Seq
                     }
                     else
                     {
-                        handler = new HttpClientHandler { UseDefaultCredentials = UseDefaultCredentials };
+                        handler = GetHttpFactory().CreateMessageHandler();
+                        handler.UseDefaultCredentials = UseDefaultCredentials;
                     }
                 }
 
-                _httpClient = handler == null ? new HttpClient() : new HttpClient(handler);
+                if (handler == null)
+                {
+                    handler = GetHttpFactory().CreateMessageHandler();
+                }
+
+                _httpClient = GetHttpFactory().CreateClient(handler);
             }
 
             base.InitializeTarget();
+        }
+
+        private ISeqHttpFactory GetHttpFactory()
+        {
+            if (_defaultFactory != null)
+            {
+                return _defaultFactory;
+            }
+            var repository = LogManager.LogFactory.ServiceRepository;
+            try
+            {
+                _defaultFactory = repository.GetService(typeof(ISeqHttpFactory)) as ISeqHttpFactory;
+            }
+            catch { }
+            
+            if (_defaultFactory == null)
+            {
+                _defaultFactory = new DefaultSeqHttpFactory();
+                LogManager.LogFactory.ServiceRepository.RegisterService(typeof(ISeqHttpFactory), _defaultFactory);
+            }
+            return _defaultFactory;
         }
 
         /// <summary>

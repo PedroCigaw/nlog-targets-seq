@@ -20,11 +20,21 @@ using NLog.MessageTemplates;
 
 namespace NLog.Targets.Seq
 {
-    [ThreadSafe]
     class RenderingsLayout : Layout
     {
         IJsonConverter _jsonConverter;
-        IJsonConverter JsonConverter => _jsonConverter ?? (_jsonConverter = ConfigurationItemFactory.Default.JsonConverter);
+        IJsonConverter JsonConverter
+        {
+            get
+            {
+                return _jsonConverter ?? (_jsonConverter = GetJsonConverter());
+            }
+        }
+
+        private IJsonConverter GetJsonConverter()
+        {
+            return LogManager.LogFactory.ServiceRepository.GetService(typeof(IJsonConverter)) as IJsonConverter;
+        }
 
         protected override void RenderFormattedMessage(LogEventInfo logEvent, StringBuilder target)
         {
