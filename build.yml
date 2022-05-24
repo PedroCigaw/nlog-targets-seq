@@ -39,16 +39,24 @@ jobs:
     inputs:
       filePath: Build.ps1
 
-  - task: DotNetCoreCLI@2
+  - task: PowerShell@2
     inputs:
-      command: 'pack'
-      packagesToPack: 'src/NLog.Targets.Seq/NLog.Targets.Seq.csproj'
-      configuration: 'Release'
-      includesymbols: true
-      includesource: true
-      versioningScheme: 'off'
-      buildProperties: '--version-suffix=local'
-      verbosityPack: 'Diagnostic'
+      targetType: 'inline'
+      script: |
+        # Write your PowerShell commands here.
+        
+        dotnet pack .\src\NLog.Targets.Seq\NLog.Targets.Seq.csproj -c Release -o .\artifacts --include-source --version-suffix=local
+
+  # - task: DotNetCoreCLI@2
+  #   inputs:
+  #     command: 'pack'
+  #     packagesToPack: 'src/NLog.Targets.Seq/NLog.Targets.Seq.csproj'
+  #     configuration: 'Release'
+  #     includesymbols: true
+  #     includesource: true
+  #     versioningScheme: 'off'
+  #     buildProperties: '--version-suffix=local'
+  #     verbosityPack: 'Diagnostic'
 
   #- task: DotNetCoreCLI@2
   #  inputs:
@@ -69,6 +77,13 @@ jobs:
   #     SourceFolder: artifacts
   #     TargetFolder: $(Build.ArtifactStagingDirectory)
   #     OverWrite: true
+
+  # - task: PublishBuildArtifacts@1
+  #   displayName: 'Publish Artifact: drop'
+
   - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact: drop'
+    inputs:
+      PathtoPublish: 'artifacts'
+      ArtifactName: 'drop'
+      publishLocation: 'Container'
 ...
