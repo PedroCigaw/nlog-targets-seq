@@ -7,11 +7,16 @@ jobs:
 - job: Job_1
   displayName: Agent job 1
   pool:
-    #name: Default
-    vmImage: 'windows-latest'
+    name: Default
+    #vmImage: 'windows-latest'
   steps:
   - checkout: self
 
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '5.0.408'
+      
   - task: UseDotNet@2
     displayName: 'Use .NET Core sdk '
     inputs:
