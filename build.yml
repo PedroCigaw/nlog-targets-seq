@@ -37,9 +37,20 @@ jobs:
     inputs:
       command: 'pack'
       packagesToPack: 'src/NLog.Targets.Seq/NLog.Targets.Seq.csproj'
+      includesymbols: true
       includesource: true
       versioningScheme: 'off'
-      buildProperties: --version-suffix=local
+      nobuild: true
+      buildProperties: '--version-suffix=local'
+
+
+  #- task: DotNetCoreCLI@2
+  #  inputs:
+  #    command: 'pack'
+  #    packagesToPack: 'src/NLog.Targets.Seq/NLog.Targets.Seq.csproj'
+  #    includesource: true
+  #    versioningScheme: 'off'
+  #    buildProperties: --version-suffix=local
 
   # - task: DotNetCoreCLI@2
   #   displayName: dotnet build
