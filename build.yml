@@ -43,13 +43,12 @@ jobs:
     inputs:
       command: 'pack'
       packagesToPack: 'src/NLog.Targets.Seq/NLog.Targets.Seq.csproj'
+      configuration: 'Release'
       includesymbols: true
       includesource: true
       versioningScheme: 'off'
-      nobuild: false
       buildProperties: '--version-suffix=local'
       verbosityPack: 'Diagnostic'
-
 
   #- task: DotNetCoreCLI@2
   #  inputs:
