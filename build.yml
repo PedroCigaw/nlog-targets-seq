@@ -16,7 +16,7 @@ jobs:
     inputs:
       packageType: 'sdk'
       version: '5.0.408'
-      
+
   - task: UseDotNet@2
     displayName: 'Use .NET Core sdk '
     inputs:
@@ -25,7 +25,7 @@ jobs:
   - task: NuGetToolInstaller@1
     displayName: Use NuGet 6.0.0
     inputs:
-      versionSpec: 6.0.0
+      versionSpec: 6.2.0
       checkLatest: true
 
   - task: NuGetCommand@2
@@ -48,6 +48,7 @@ jobs:
       versioningScheme: 'off'
       nobuild: false
       buildProperties: '--version-suffix=local'
+      verbosityPack: 'Diagnostic'
 
 
   #- task: DotNetCoreCLI@2
