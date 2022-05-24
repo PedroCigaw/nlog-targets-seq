@@ -40,7 +40,7 @@ jobs:
       includesymbols: true
       includesource: true
       versioningScheme: 'off'
-      nobuild: true
+      nobuild: false
       buildProperties: '--version-suffix=local'
 
 
