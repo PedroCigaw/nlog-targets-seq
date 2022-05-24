@@ -45,7 +45,7 @@ jobs:
       script: |
         # Write your PowerShell commands here.
         
-        dotnet pack .\src\NLog.Targets.Seq\NLog.Targets.Seq.csproj -c Release -o .\artifacts --include-source --version-suffix=local
+        dotnet pack .\src\NLog.Targets.Seq\NLog.Targets.Seq.csproj -c Release -o .\artifacts --include-source --version-suffix=cigaw-local
 
   # - task: DotNetCoreCLI@2
   #   inputs:
